@@ -2,51 +2,55 @@
  * Module declaration with an IIFE
  * Remark : the two modules are completely independent => they will not be interactions between them
  * The controllers don't know the other one exists
+ * Budget controller
  */
 
 var budgetController = (function() {
     
-    // Private variable
-    var x = 23;
-
-    // Private function (closure)
-    var add = function(a) {
-        return a + x;
-    }
-
-    // Return of an object (only the publicTest method can access to the x variable and add() function)
-    return {
-        publicTest: function(b) {
-            return add(b);
-        }
-    }
+    // Some code
 
 })();
 
-
+/**
+ * UI Controller
+ */
 var UIController = (function() {
 
     // We'Il write some code later
 
 })();
 
+/**
+ * Global App Controller
+ * @type {{anotherPublic: dataController.anotherPublic}}
+ */
 var dataController = (function(budgetCtrl, UICtrl) {
 
-    // Some code later
-    // We could pass the budgetController module like this in our dataController => but it's not a good practice...
-    //... this would make the controller a little bit less independent...
-    //... because if we want to change the name of budgetController(), we will just change it down in the invoke 
-    // budgetController.publicTest();
+    var ctrtAddItem = function() {
 
-    var z = budgetCtrl.publicTest(5);
+        /**
+         * TO DO list
+         * 1. Get the field input data (récupérer les données d'entrées)
+         * 2. Add the item to the budget controller
+         * 3. Add the new item to the user interface
+         * 4. Calculate the budget
+         * 5. Display the budget on the User Interface
+         */
 
-    // Return a public object
-    return {
-        anotherPublic: function() {
-            console.log(z);
-        }
+        console.log('It works');
+
     }
 
-    // Passing budgetController and UIController as arguments to invoke them immediately
+    document.querySelector('.add__btn').addEventListener('click', ctrtAddItem);
+
+    document.addEventListener('keypress', function(event) {
+
+        if (event.keyCode === 13 || event.which === 13 ) {
+            ctrtAddItem();
+
+        }
+    });
+
+
 })(budgetController, UIController);
 
