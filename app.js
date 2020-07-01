@@ -110,7 +110,9 @@ var UIController = (function() {
         inputType: '.add__type',
         descriptionType: '.add__description',
         valueType: '.add__value',
-        inputBtn : '.add__btn'
+        inputBtn : '.add__btn',
+        incomeContainer: '.income__list',
+        expenseContainer: '.expenses__list'
     };
 
     // Public method
@@ -123,6 +125,37 @@ var UIController = (function() {
                 description: document.querySelector(DOMstrings.descriptionType).value,
                 value: document.querySelector(DOMstrings.valueType).value
             };
+        },
+
+        // Adding new items into our user interface
+        // What do we need? The object itself and the type of the bill
+        addListItem: function(obj, type) {
+
+            var html, newHtml, element;
+            // Create an HTML string with placeholder text
+
+            if (type === 'incomes') {
+                element = DOMstrings.incomeContainer;
+                html = '<div class="item clearfix" id="incomes-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+            } else if (type === 'expenses') {
+                element = DOMstrings.expenseContainer;
+                html = '<div class="item clearfix" id="expenses-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+            }
+
+            // Replace the placeholder text with some actual data
+            // Remember : the id property is the one contained by our function constructors
+
+            newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
+
+
+
+            // Insert the HTML into the DOM
+
+            // Remember : element refers to the DOMstrings elements
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+
         },
 
         // Expose the DOMstrings object into the public
@@ -172,6 +205,9 @@ var dataController = (function(budgetCtrl, UICtrl) {
             console.log(newItem);
 
           // 3. Add the new item to the user interface
+
+            // We pass the newItem that it was created
+            UIController.addListItem(newItem, input.type);
 
           // 4. Calculate the budget
 
