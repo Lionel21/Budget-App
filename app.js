@@ -158,6 +158,28 @@ var UIController = (function() {
 
         },
 
+        // Public method
+        // Clean the data inputs after a submit
+        clearFields: function() {
+            var fields, fieldsArray;
+            fields = document.querySelectorAll(DOMstrings.descriptionType + ', ' +  DOMstrings.valueType);
+
+            // The Array prototype will return an array for the fields variable
+            // We can now loop on this array and clear all the fields that were selected
+            fieldsArray = Array.prototype.slice.call(fields);
+
+            // This method moves over all of the elements of the fields array
+            fieldsArray.forEach(function(currentValue, currentIndex, originalArray) {
+                // The fields will be simply be cleared
+                // forEach sets the values all of them back to an empty string
+                currentValue.value = "";
+            });
+
+            // After a submit => go back to the first input to enter a new data
+            fieldsArray[0].focus();
+
+        },
+
         // Expose the DOMstrings object into the public
         getDOMstrings: function() {
             return DOMstrings;
@@ -209,9 +231,12 @@ var dataController = (function(budgetCtrl, UICtrl) {
             // We pass the newItem that it was created
             UIController.addListItem(newItem, input.type);
 
-          // 4. Calculate the budget
+            // 4. Clear the fields
+        UIController.clearFields();
 
-          // 5. Display the budget on the User Interface
+          // 5. Calculate the budget
+
+          // 6. Display the budget on the User Interface
 
     };
 
