@@ -123,7 +123,11 @@ var UIController = (function() {
                 //.value => read the value of the selector
                 type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
                 description: document.querySelector(DOMstrings.descriptionType).value,
-                value: document.querySelector(DOMstrings.valueType).value
+                /**
+                 * The value bellow read the input into a string, but we want an integer for the calculates
+                 * parseFloat() convert a string to a floating number
+                 */
+                value: parseFloat(document.querySelector(DOMstrings.valueType).value)
             };
         },
 
@@ -210,6 +214,15 @@ var dataController = (function(budgetCtrl, UICtrl) {
     };
 
 
+    var updateBudget = function() {
+
+        // 1. Calculate the budget
+
+        // 2. Return the budget (with a method), and nothing else (just a return)
+
+        // 3. Display the budget on the User Interface
+
+    };
 
     var ctrtAddItem = function() {
 
@@ -221,24 +234,25 @@ var dataController = (function(budgetCtrl, UICtrl) {
             input = UICtrl.getinput();
             console.log(input);
 
-          // 2. Add the item to the budget controller
+            if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
+                // 2. Add the item to the budget controller
 
-            newItem = budgetController.addItem(input.type, input.description, input.value);
-            console.log(newItem);
+                newItem = budgetController.addItem(input.type, input.description, input.value);
+                console.log(newItem);
 
-          // 3. Add the new item to the user interface
+                // 3. Add the new item to the user interface
 
-            // We pass the newItem that it was created
-            UIController.addListItem(newItem, input.type);
+                // We pass the newItem that it was created
+                UIController.addListItem(newItem, input.type);
 
-            // 4. Clear the fields
-        UIController.clearFields();
+                // 4. Clear the fields
+                UIController.clearFields();
 
-          // 5. Calculate the budget
+                // 5. Calculate and update budget
+                updateBudget()
+            }
 
-          // 6. Display the budget on the User Interface
-
-    };
+        };
 
     return {
         init: function() {
