@@ -21,6 +21,15 @@ var budgetController = (function() {
         this.value = value;
     };
 
+    var calculateTotal = function(type) {
+        var sum = 0;
+        data.allItems[type].forEach(function(current) {
+            sum += current.value;
+        });
+
+        data.totals[type] = sum;
+    };
+
     // Array creations to set up datas in there => not a good practice (need to have a big structure for everything)
     // var allExpenses = [];
     // var allIncomes = [];
@@ -39,6 +48,12 @@ var budgetController = (function() {
             expenses: 0,
             incomes: 0
         },
+        budget: 0,
+        /**
+         * The mines 1 means that is an income or an expense don't exist, there is no percentage automatically
+         */
+        percentage : -1
+
     };
 
     // Adding a new Item
@@ -87,6 +102,50 @@ var budgetController = (function() {
 
             // Return the new element
             return newItem;
+        },
+
+        calculateBudget: function() {
+
+            // Calculate total income and expenses
+
+            /**
+             * I use the calculateTotal method into my expenses et my incomes
+             */
+            calculateTotal('expenses');
+            calculateTotal('incomes');
+
+            // Calculate the budget: income - expenses
+
+            /**
+             * @type {number}
+             * Get the data into our data structure
+             */
+            data.budget = data.totals.incomes - data.totals.expenses;
+
+            // Calculate the percentage of income that we spent
+
+            /**
+             * Avoid the division by 0
+             */
+            if (data.totals.incomes > 0) {
+                data.percentage = Math.round((data.totals.expenses / data.totals.incomes)) * 100;
+            } else {
+                data.percentage = -1;
+            }
+
+
+        },
+
+        /**
+         * Method who will only return something from our data structure
+         */
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.incomes,
+                totalExpense: data.totals.expenses,
+                percentage: data.percentage
+            }
         },
 
         // Creation of a function for testing the data object
@@ -218,9 +277,15 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
         // 1. Calculate the budget
 
+        budgetCtrl.calculateBudget();
+
         // 2. Return the budget (with a method), and nothing else (just a return)
 
+        var budget = budgetCtrl.getBudget();
+
         // 3. Display the budget on the User Interface
+
+        console.log(budget);
 
     };
 
