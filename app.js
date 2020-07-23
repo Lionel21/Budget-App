@@ -171,7 +171,11 @@ var UIController = (function() {
         valueType: '.add__value',
         inputBtn : '.add__btn',
         incomeContainer: '.income__list',
-        expenseContainer: '.expenses__list'
+        expenseContainer: '.expenses__list',
+        budgetLabel: '.budget__value',
+        incomeLabel: '.budget__income--value',
+        expensesLabel: '.budget__expenses--value',
+        percentageLabel: '.budget__expenses--percentage'
     };
 
     // Public method
@@ -240,11 +244,23 @@ var UIController = (function() {
 
             // After a submit => go back to the first input to enter a new data
             fieldsArray[0].focus();
+        },
 
+        // Méthode pour mettre à jour l'interface utilisateur
+        displayBudget: function(object) {
+            document.querySelector(DOMstrings.budgetLabel).textContent = object.budget;
+            document.querySelector(DOMstrings.incomeLabel).textContent = object.totalIncome;
+            document.querySelector(DOMstrings.expensesLabel).textContent = object.totalExpense;
+
+            if (object.percentage > 0) {
+                document.querySelector(DOMstrings.percentageLabel).textContent = object.percentage + '%';
+            } else {
+                document.querySelector(DOMstrings.percentageLabel).textContent = '---';
+            }
         },
 
         // Expose the DOMstrings object into the public
-        getDOMstrings: function() {
+        getDOMstrings: function(object) {
             return DOMstrings;
         }
     };
@@ -285,7 +301,10 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
         // 3. Display the budget on the User Interface
 
-        console.log(budget);
+        /**
+         * On retourne l'objet budget en paramètre
+         */
+        UICtrl.displayBudget(budget);
 
     };
 
@@ -322,6 +341,13 @@ var dataController = (function(budgetCtrl, UICtrl) {
     return {
         init: function() {
             console.log('Application has started');
+            // Copie de cette méthode pour tout réinitialiser à zéro à chaque rechargement de page
+            UICtrl.displayBudget({
+                budget: 0,
+                totalIncome: 0,
+                totalExpense: 0,
+                percentage: -1
+            });
             setupEventListeners();
         },
     }
