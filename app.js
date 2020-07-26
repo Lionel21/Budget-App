@@ -342,6 +342,21 @@ var dataController = (function(budgetCtrl, UICtrl) {
          * On retourne l'objet budget en paramètre
          */
         UICtrl.displayBudget(budget);
+    };
+
+    /**
+     * Méthode pour mettre à jour les pourcentages de chaque revenu dépensé
+     */
+    var updatePercentages = function() {
+
+        // 1. Calculer les pourcentages
+
+
+        // 2. Lire les pourcentages à partir du controller du budget
+
+
+        // 3. Mettre à jour l'interface utilisateur avec les pourcentages
+
 
     };
 
@@ -370,7 +385,10 @@ var dataController = (function(budgetCtrl, UICtrl) {
                 UIController.clearFields();
 
                 // 5. Calculate and update budget
-                updateBudget()
+                updateBudget();
+
+                // 6. Calculer et mettre à jour les pourcentages
+                updatePercentages();
             }
 
         };
@@ -398,6 +416,9 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
             // 3. Mettre à jour le nouveau budget total
             updateBudget();
+
+            // 4. Mettre à jour les pourcentages
+            updatePercentages();
 
         }
     };
