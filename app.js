@@ -251,6 +251,14 @@ var UIController = (function() {
 
         },
 
+        /**
+         * Méthode pour supprimer un budget
+         */
+        deleteListItem: function(selectorID) {
+            var element = document.getElementById(selectorID);
+            element.parentNode.removeChild(element);
+        },
+
         // Public method
         // Clean the data inputs after a submit
         clearFields: function() {
@@ -386,7 +394,10 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
             // 2. Supprimer un budget à partir de l'interface utilisateur
 
+            UICtrl.deleteListItem(itemID);
+
             // 3. Mettre à jour le nouveau budget total
+            updateBudget();
 
         }
     };
