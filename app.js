@@ -104,6 +104,31 @@ var budgetController = (function() {
             return newItem;
         },
 
+
+        /**
+         * Création d'une méthode pour supprimer un budget
+         * type => représente le tableau de nos objets
+         */
+        deleteItem: function(type, id) {
+            var ids, index;
+
+            // ids = [1 2 4 6 8]
+            // id = 6 (comment faire pour supprimer 6 sachant que l'index = 3 ?)
+            // data.allItems[type][id]; <= pas la bonne méthode
+
+            // On avait utilié la méthode .forEach. La méthode .map est très similaire
+            ids = data.allItems[type].map(function(current) {
+                return current.id;
+            });
+
+            index = ids.indexOf(id);
+
+            if (index !== -1) {
+                data.allItems[type].splice(index, 1);
+            }
+
+        },
+
         calculateBudget: function() {
 
             // Calculate total income and expenses
@@ -175,7 +200,8 @@ var UIController = (function() {
         budgetLabel: '.budget__value',
         incomeLabel: '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
-        percentageLabel: '.budget__expenses--percentage'
+        percentageLabel: '.budget__expenses--percentage',
+        container: '.container'
     };
 
     // Public method
@@ -286,6 +312,9 @@ var dataController = (function(budgetCtrl, UICtrl) {
                 ctrtAddItem();
             }
         });
+
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
     };
 
 
@@ -337,6 +366,30 @@ var dataController = (function(budgetCtrl, UICtrl) {
             }
 
         };
+
+    var ctrlDeleteItem = function(event) {
+        var itemID, splitID, type, ID;
+
+        // On précise l'id pour sélectionner un élément unique
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+        if (itemID) {
+
+            // Format d'affichage de l'id : inc-1
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = parseInt(splitID[1]);
+
+            // 1. Supprimer un budget à partir de notre structure de données
+
+            budgetCtrl.deleteItem(type, ID);
+
+            // 2. Supprimer un budget à partir de l'interface utilisateur
+
+            // 3. Mettre à jour le nouveau budget total
+
+        }
+    };
 
     return {
         init: function() {
