@@ -243,6 +243,51 @@ var UIController = (function() {
         expPercentages: '.item__percentage'
     };
 
+    /**
+     *
+     * @param number
+     * @param type = nature de l'opérateur
+     * Méthode pour formater les chiffres
+     */
+    var formatNumber = function(number, type) {
+        var numberSplit, integerPart, decimalPart, type;
+
+        /**
+         * + ou -avant le nombre
+         * Obtenir deux décimaux
+         * Obtenir unr virgule pour séparer les milliers
+         *
+         * Exemple : 2310.4567 => + 2,310.46
+         */
+
+        // Valeur absolue
+        number = Math.abs(number);
+
+        // Valeur décimale
+        number = number.toFixed(2);
+
+        numberSplit = number.split('.');
+
+        integerPart = numberSplit[0];
+
+        // Rappel : integerPart est une chaîne de caractères qui se situe dans un tableau => donc on peut accéder la propriété length
+        if (integerPart.length > 3) {
+            // Pas la bonne méthode : car si le input = 23410 => output = 2,3410
+            // integerPart = integerPart.substr(0, 1) + ',' + integerPart.substr(1, 3); // Input 2310, output 2,310
+
+
+            integerPart = integerPart.substr(0, integerPart.length - 3) + ',' + integerPart.substr(integerPart.length - 3, integerPart.length); // input 23410 => output : 23,410
+        }
+
+        decimalPart = numberSplit[1];
+
+        // Si le type est égal à 'expenses', alors le site est '-', sinon le signe est '+'
+        // type === 'exp' ? sign = '-' : sign = '+';
+        //
+        // return type + ' ' + integerPart + '.' + decimalPart;
+        return (type === 'expenses' ? '-' : '+') + ' ' + integerPart + '.' + decimalPart;
+    };
+
     // Public method
     return {
         getinput: function() {
@@ -279,7 +324,8 @@ var UIController = (function() {
 
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', obj.value);
+            newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
+
 
 
 
@@ -321,9 +367,12 @@ var UIController = (function() {
 
         // Méthode pour mettre à jour l'interface utilisateur
         displayBudget: function(object) {
-            document.querySelector(DOMstrings.budgetLabel).textContent = object.budget;
-            document.querySelector(DOMstrings.incomeLabel).textContent = object.totalIncome;
-            document.querySelector(DOMstrings.expensesLabel).textContent = object.totalExpense;
+            var type;
+            object.budget > 0 ? type = 'incomes' : type = 'expenses';
+
+            document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(object.budget, type);
+            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(object.totalIncome, 'incomes');
+            document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(object.totalExpense, 'expenses');
 
             if (object.percentage > 0) {
                 document.querySelector(DOMstrings.percentageLabel).textContent = object.percentage + '%';
