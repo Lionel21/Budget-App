@@ -240,7 +240,8 @@ var UIController = (function() {
         expensesLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
-        expPercentages: '.item__percentage'
+        expPercentages: '.item__percentage',
+        dateLabel: '.budget__title--month'
     };
 
     /**
@@ -402,6 +403,21 @@ var UIController = (function() {
                     current.textContent = '---';
                 }
             });
+        },
+
+        /**
+         * Méthode pour afficher le mois et l'année actuel
+         */
+        displayMonth: function() {
+            var currentDate, month, months, year;
+
+            currentDate = new Date();
+
+            // Astuce pour obtenir les noms de mois au lieu d'obtenir des chiffres
+            months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+            month = currentDate.getMonth();
+            year = currentDate.getFullYear();
+            document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' +  year;
 
         },
 
@@ -536,6 +552,7 @@ var dataController = (function(budgetCtrl, UICtrl) {
     return {
         init: function() {
             console.log('Application has started');
+            UICtrl.displayMonth();
             // Copie de cette méthode pour tout réinitialiser à zéro à chaque rechargement de page
             UICtrl.displayBudget({
                 budget: 0,
