@@ -106,9 +106,6 @@ var budgetController = (function() {
                 ID = 0;
             }
 
-
-
-
             // Create new item based on "expenses" and on "incomes" type
             // Conditions to verify if the new item is an expense or an income, and create a new object according the item
             if (type === 'expenses') {
@@ -224,7 +221,7 @@ var budgetController = (function() {
 })();
 
 /**
- * UI Controller
+ * UI Controller method
  */
 var UIController = (function() {
 
@@ -242,7 +239,8 @@ var UIController = (function() {
         incomeLabel: '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',
-        container: '.container'
+        container: '.container',
+        expPercentages: '.item__percentage'
     };
 
     // Public method
@@ -334,13 +332,35 @@ var UIController = (function() {
             }
         },
 
+        /**
+         * Méthode pour afficher les pourcentages sur l'interface utilisateur
+         */
+        displayPercentages: function(percentages) {
+
+            var fields = document.querySelector(DOMstrings.expPercentages);
+
+            var nodeListForEach = function(list, callback) {
+                for (var i = 0; i < list.length; i++) {
+                    callback(list[i], i);
+                }
+            };
+
+            nodeListForEach(fields, function(current, index) {
+
+                if (percentages[index] > 0) {
+                    current.textContent = percentages[index] + '%';
+                } else {
+                    current.textContent = '---';
+                }
+            });
+
+        },
+
         // Expose the DOMstrings object into the public
         getDOMstrings: function(object) {
             return DOMstrings;
         }
     };
-
-
 })();
 
 /**
@@ -397,7 +417,7 @@ var dataController = (function(budgetCtrl, UICtrl) {
         var percentages = budgetCtrl.getPercentages();
 
         // 3. Mettre à jour l'interface utilisateur avec les pourcentages
-        console.log(percentages);
+        UIController.displayPercentages(percentages);
 
     };
 
