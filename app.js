@@ -289,6 +289,12 @@ var UIController = (function() {
         return (type === 'expenses' ? '-' : '+') + ' ' + integerPart + '.' + decimalPart;
     };
 
+    var nodeListForEach = function(list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    };
+
     // Public method
     return {
         getinput: function() {
@@ -389,12 +395,6 @@ var UIController = (function() {
 
             var fields = document.querySelector(DOMstrings.expPercentages);
 
-            var nodeListForEach = function(list, callback) {
-                for (var i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                }
-            };
-
             nodeListForEach(fields, function(current, index) {
 
                 if (percentages[index] > 0) {
@@ -420,6 +420,25 @@ var UIController = (function() {
             document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' +  year;
 
         },
+
+        /**
+         * Méthode pour effectuer quelques modifications de styles au niveau de l'interface utilisateur
+         */
+        changedType: function() {
+
+            var fields = document.querySelectorAll(
+                DOMstrings.inputType, +',' +
+                DOMstrings.descriptionType + ',' +
+                DOMstrings.valueType);
+
+            nodeListForEach(fields, function (current) {
+                current.classList.add('red-focus');
+            });
+
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
+        },
+
+
 
         // Expose the DOMstrings object into the public
         getDOMstrings: function(object) {
@@ -448,6 +467,8 @@ var dataController = (function(budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
 
     };
 
