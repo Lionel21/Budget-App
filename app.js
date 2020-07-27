@@ -12,6 +12,27 @@ var budgetController = (function() {
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = - 1;
+    };
+
+    Expense.prototype.calcPercentage = function(totalIncome) {
+
+        /**
+         * Condition pour ne pas diviser par zéro
+         */
+        if (totalIncome > 0) {
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1;
+        }
+    };
+
+    /**
+     * @returns {number}
+     * Méthode qui permet de renvoyer le pourcentage de l'objet
+     */
+    Expense.prototype.getPercentage = function() {
+        return this.percentage;
     };
 
     // Function constructor for the income
@@ -159,6 +180,26 @@ var budgetController = (function() {
             }
 
 
+        },
+
+        /**
+         * Méthode pour calculer les pourcentages
+         */
+        calculatePercentages: function() {
+
+            // fonction() => callback fonction
+            // cur => variable actuelle
+            data.allItems.expenses.forEach(function(cur) {
+                cur.calcPercentage(data.totals.incomes);
+            });
+        },
+
+        // On récupère les pourcentages
+        getPercentages: function() {
+            var allPerc = data.allItems.expenses.map(function(cur) {
+                return cur.getPercentage();
+            });
+            return allPerc;
         },
 
         /**
@@ -350,13 +391,13 @@ var dataController = (function(budgetCtrl, UICtrl) {
     var updatePercentages = function() {
 
         // 1. Calculer les pourcentages
-
+        budgetCtrl.calculatePercentages();
 
         // 2. Lire les pourcentages à partir du controller du budget
-
+        var percentages = budgetCtrl.getPercentages();
 
         // 3. Mettre à jour l'interface utilisateur avec les pourcentages
-
+        console.log(percentages);
 
     };
 
