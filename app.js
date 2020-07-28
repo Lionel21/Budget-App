@@ -393,7 +393,7 @@ var UIController = (function() {
          */
         displayPercentages: function(percentages) {
 
-            var fields = document.querySelector(DOMstrings.expPercentages);
+            var fields = document.querySelectorAll(DOMstrings.expPercentages);
 
             nodeListForEach(fields, function(current, index) {
 
@@ -403,6 +403,7 @@ var UIController = (function() {
                     current.textContent = '---';
                 }
             });
+
         },
 
         /**
@@ -427,11 +428,11 @@ var UIController = (function() {
         changedType: function() {
 
             var fields = document.querySelectorAll(
-                DOMstrings.inputType, +',' +
+                DOMstrings.inputType + ',' +
                 DOMstrings.descriptionType + ',' +
                 DOMstrings.valueType);
 
-            nodeListForEach(fields, function (current) {
+            nodeListForEach(fields, function(current) {
                 current.classList.add('red-focus');
             });
 
