@@ -2,12 +2,17 @@
  * Module declaration with an IIFE
  * Remark : the two modules are completely independent => they will not be interactions between them
  * The controllers don't know the other one exists
- * Budget controller
  */
 
 var budgetController = (function() {
 
-    // Function constructor (use a capital at the begenning) for the expense
+    /**
+     * Constructor for the expense
+     * @param id
+     * @param description
+     * @param value
+     * @constructor
+     */
     var Expense = function(id, description, value) {
         this.id = id;
         this.description = description;
@@ -15,11 +20,13 @@ var budgetController = (function() {
         this.percentage = - 1;
     };
 
+    /**
+     *
+     * @param totalIncome
+     */
     Expense.prototype.calcPercentage = function(totalIncome) {
 
-        /**
-         * Condition pour ne pas diviser par zéro
-         */
+        // Condition not to divide on zero
         if (totalIncome > 0) {
             this.percentage = Math.round((this.value / totalIncome) * 100);
         } else {
@@ -28,14 +35,20 @@ var budgetController = (function() {
     };
 
     /**
+     * Method who allow to send back the percentage object
      * @returns {number}
-     * Méthode qui permet de renvoyer le pourcentage de l'objet
      */
     Expense.prototype.getPercentage = function() {
         return this.percentage;
     };
 
-    // Function constructor for the income
+    /**
+     * Constructor for the incomes
+     * @param id
+     * @param description
+     * @param value
+     * @constructor
+     */
     var Income = function(id, description, value) {
         this.id = id;
         this.description = description;
@@ -51,12 +64,6 @@ var budgetController = (function() {
         data.totals[type] = sum;
     };
 
-    // Array creations to set up datas in there => not a good practice (need to have a big structure for everything)
-    // var allExpenses = [];
-    // var allIncomes = [];
-    // var totalExpenses = [];
-
-    // Object creation => better solution
     // Private variable
     var data = {
         // Create an object into an object
@@ -70,9 +77,7 @@ var budgetController = (function() {
             incomes: 0
         },
         budget: 0,
-        /**
-         * The mines 1 means that is an income or an expense don't exist, there is no percentage automatically
-         */
+        // The mines 1 means that is an income or an expense don't exist, there is no percentage automatically
         percentage : -1
 
     };
@@ -80,26 +85,9 @@ var budgetController = (function() {
     // Adding a new Item
     // Public method
     return {
-        // To avoid some confusions : change a little the parameter names
         addItem: function(type, des, val) {
             var newItem, ID;
 
-            // How to create a unique ID?
-            // First possibility:
-            // [1, 2, 3, 4, 5], next ID = 6;
-
-            // But it's a big problem, because if we delete an item, we'Il have an array like this
-            // [0, 1, 2, 4, 6, 91], next ID should be 92 (and not 3) : that's the number that comes after the last one
-
-            // What we really want:
-            // ID = last ID + 1
-
-            // Create new ID
-            // First: we want to select our last item element
-            // Second: calculate the allItems array and adding + 1 into the id
-
-            // If data is empty, nothing can be add according this: ID  = data.allItems[type][data.allItems[type].length - 1].id + 1; because there is nothing...
-            // ... so it's an error
             if (data.allItems[type].length > 0) {
                 ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
             } else {
@@ -124,17 +112,11 @@ var budgetController = (function() {
 
 
         /**
-         * Création d'une méthode pour supprimer un budget
-         * type => représente le tableau de nos objets
+         * Creation of a method to delete a budget
          */
         deleteItem: function(type, id) {
             var ids, index;
 
-            // ids = [1 2 4 6 8]
-            // id = 6 (comment faire pour supprimer 6 sachant que l'index = 3 ?)
-            // data.allItems[type][id]; <= pas la bonne méthode
-
-            // On avait utilié la méthode .forEach. La méthode .map est très similaire
             ids = data.allItems[type].map(function(current) {
                 return current.id;
             });
@@ -144,15 +126,12 @@ var budgetController = (function() {
             if (index !== -1) {
                 data.allItems[type].splice(index, 1);
             }
-
         },
 
         calculateBudget: function() {
 
-            // Calculate total income and expenses
-
             /**
-             * I use the calculateTotal method into my expenses et my incomes
+             * Using the calculateTotal method into the expenses et the incomes
              */
             calculateTotal('expenses');
             calculateTotal('incomes');
@@ -160,8 +139,8 @@ var budgetController = (function() {
             // Calculate the budget: income - expenses
 
             /**
-             * @type {number}
              * Get the data into our data structure
+             * @type {number}
              */
             data.budget = data.totals.incomes - data.totals.expenses;
 
@@ -176,22 +155,19 @@ var budgetController = (function() {
                 data.percentage = -1;
             }
 
-
         },
 
         /**
-         * Méthode pour calculer les pourcentages
+         * Method to calculate the percentages
          */
         calculatePercentages: function() {
 
-            // fonction() => callback fonction
-            // cur => variable actuelle
             data.allItems.expenses.forEach(function(cur) {
                 cur.calcPercentage(data.totals.incomes);
             });
         },
 
-        // On récupère les pourcentages
+        // Get the percentages
         getPercentages: function() {
             var allPerc = data.allItems.expenses.map(function(cur) {
                 return cur.getPercentage();
@@ -215,9 +191,7 @@ var budgetController = (function() {
         testing: function() {
             console.log(data);
         }
-
     };
-
 })();
 
 /**
@@ -225,9 +199,6 @@ var budgetController = (function() {
  */
 var UIController = (function() {
 
-    // Private object
-    // Good practice : insert differents value and call them back into our querySelector...
-    // ... if we want to change our values, it can be done with this practice, avoid bugs and can change them easily
     var DOMstrings = {
         inputType: '.add__type',
         descriptionType: '.add__description',
@@ -248,47 +219,33 @@ var UIController = (function() {
      *
      * @param number
      * @param type = nature de l'opérateur
-     * Méthode pour formater les chiffres
+     * Method to formate the type
      */
     var formatNumber = function(number, type) {
         var numberSplit, integerPart, decimalPart, type;
 
-        /**
-         * + ou -avant le nombre
-         * Obtenir deux décimaux
-         * Obtenir unr virgule pour séparer les milliers
-         *
-         * Exemple : 2310.4567 => + 2,310.46
-         */
-
-        // Valeur absolue
+        // Absolute value
         number = Math.abs(number);
 
-        // Valeur décimale
+        // Decimal value
         number = number.toFixed(2);
-
         numberSplit = number.split('.');
-
         integerPart = numberSplit[0];
 
-        // Rappel : integerPart est une chaîne de caractères qui se situe dans un tableau => donc on peut accéder la propriété length
+        // Reminder : integerPart is a string  which is located in an array => so we can use the length property
         if (integerPart.length > 3) {
-            // Pas la bonne méthode : car si le input = 23410 => output = 2,3410
-            // integerPart = integerPart.substr(0, 1) + ',' + integerPart.substr(1, 3); // Input 2310, output 2,310
-
-
             integerPart = integerPart.substr(0, integerPart.length - 3) + ',' + integerPart.substr(integerPart.length - 3, integerPart.length); // input 23410 => output : 23,410
         }
 
         decimalPart = numberSplit[1];
 
-        // Si le type est égal à 'expenses', alors le site est '-', sinon le signe est '+'
-        // type === 'exp' ? sign = '-' : sign = '+';
-        //
-        // return type + ' ' + integerPart + '.' + decimalPart;
         return (type === 'expenses' ? '-' : '+') + ' ' + integerPart + '.' + decimalPart;
     };
 
+    /**
+     * @param list
+     * @param callback
+     */
     var nodeListForEach = function(list, callback) {
         for (var i = 0; i < list.length; i++) {
             callback(list[i], i);
@@ -300,12 +257,11 @@ var UIController = (function() {
         getinput: function() {
             // Return an object instead three variables
             return {
-                //.value => read the value of the selector
                 type: document.querySelector(DOMstrings.inputType).value, // Will be either inc or exp
                 description: document.querySelector(DOMstrings.descriptionType).value,
+
                 /**
                  * The value bellow read the input into a string, but we want an integer for the calculates
-                 * parseFloat() convert a string to a floating number
                  */
                 value: parseFloat(document.querySelector(DOMstrings.valueType).value)
             };
@@ -327,24 +283,20 @@ var UIController = (function() {
             }
 
             // Replace the placeholder text with some actual data
-            // Remember : the id property is the one contained by our function constructors
+            // Reminder : the id property is the one contained by our constructors
 
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
             newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
 
-
-
-
             // Insert the HTML into the DOM
-
             // Remember : element refers to the DOMstrings elements
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
 
         },
 
         /**
-         * Méthode pour supprimer un budget
+         * Method for delete a budget
          */
         deleteListItem: function(selectorID) {
             var element = document.getElementById(selectorID);
@@ -372,7 +324,10 @@ var UIController = (function() {
             fieldsArray[0].focus();
         },
 
-        // Méthode pour mettre à jour l'interface utilisateur
+        /**
+         * Method for update the user interface
+         * @param object
+         */
         displayBudget: function(object) {
             var type;
             object.budget > 0 ? type = 'incomes' : type = 'expenses';
@@ -389,7 +344,7 @@ var UIController = (function() {
         },
 
         /**
-         * Méthode pour afficher les pourcentages sur l'interface utilisateur
+         * Method to display the percentages on the user interface
          */
         displayPercentages: function(percentages) {
 
@@ -407,14 +362,14 @@ var UIController = (function() {
         },
 
         /**
-         * Méthode pour afficher le mois et l'année actuel
+         * Method to display the current month and year
          */
         displayMonth: function() {
             var currentDate, month, months, year;
 
             currentDate = new Date();
 
-            // Astuce pour obtenir les noms de mois au lieu d'obtenir des chiffres
+            // Trick to get the month names instead to get the numbers
             months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
             month = currentDate.getMonth();
             year = currentDate.getFullYear();
@@ -438,8 +393,6 @@ var UIController = (function() {
 
             document.querySelector(DOMstrings.inputBtn).classList.toggle('red');
         },
-
-
 
         // Expose the DOMstrings object into the public
         getDOMstrings: function(object) {
@@ -468,42 +421,34 @@ var dataController = (function(budgetCtrl, UICtrl) {
         });
 
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
-
         document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
-
     };
 
 
     var updateBudget = function() {
 
         // 1. Calculate the budget
-
         budgetCtrl.calculateBudget();
 
         // 2. Return the budget (with a method), and nothing else (just a return)
-
         var budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the User Interface
-
-        /**
-         * On retourne l'objet budget en paramètre
-         */
         UICtrl.displayBudget(budget);
     };
 
     /**
-     * Méthode pour mettre à jour les pourcentages de chaque revenu dépensé
+     * Method to update the percentages on every income spent
      */
     var updatePercentages = function() {
 
-        // 1. Calculer les pourcentages
+        // 1. Percentage calculations
         budgetCtrl.calculatePercentages();
 
-        // 2. Lire les pourcentages à partir du controller du budget
+        // 2. Read the percentages from the budget controller
         var percentages = budgetCtrl.getPercentages();
 
-        // 3. Mettre à jour l'interface utilisateur avec les pourcentages
+        // 3. Update the user interface with the percentages
         UIController.displayPercentages(percentages);
 
     };
@@ -514,19 +459,15 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
           // TO DO list
           // 1. Get the field input data (récupérer les données d'entrées)
-
             input = UICtrl.getinput();
-            console.log(input);
 
             if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
                 // 2. Add the item to the budget controller
 
                 newItem = budgetController.addItem(input.type, input.description, input.value);
-                console.log(newItem);
 
                 // 3. Add the new item to the user interface
-
-                // We pass the newItem that it was created
+                // Passing the newItem that it was created
                 UIController.addListItem(newItem, input.type);
 
                 // 4. Clear the fields
@@ -535,37 +476,34 @@ var dataController = (function(budgetCtrl, UICtrl) {
                 // 5. Calculate and update budget
                 updateBudget();
 
-                // 6. Calculer et mettre à jour les pourcentages
+                // 6. Update the percentages
                 updatePercentages();
             }
-
         };
 
     var ctrlDeleteItem = function(event) {
         var itemID, splitID, type, ID;
 
-        // On précise l'id pour sélectionner un élément unique
+        // Specify the id to select a unique element
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (itemID) {
 
-            // Format d'affichage de l'id : inc-1
+            // Format to display the id: inc-1
             splitID = itemID.split('-');
             type = splitID[0];
             ID = parseInt(splitID[1]);
 
-            // 1. Supprimer un budget à partir de notre structure de données
-
+            // 1. Delete a budget from our data structure
             budgetCtrl.deleteItem(type, ID);
 
-            // 2. Supprimer un budget à partir de l'interface utilisateur
-
+            // 2. Delete a budget from the user interface
             UICtrl.deleteListItem(itemID);
 
-            // 3. Mettre à jour le nouveau budget total
+            // 3. Update the new total budget
             updateBudget();
 
-            // 4. Mettre à jour les pourcentages
+            // 4. Update the percentages
             updatePercentages();
 
         }
@@ -573,9 +511,8 @@ var dataController = (function(budgetCtrl, UICtrl) {
 
     return {
         init: function() {
-            console.log('Application has started');
             UICtrl.displayMonth();
-            // Copie de cette méthode pour tout réinitialiser à zéro à chaque rechargement de page
+            // Reset the elements on each page load
             UICtrl.displayBudget({
                 budget: 0,
                 totalIncome: 0,
